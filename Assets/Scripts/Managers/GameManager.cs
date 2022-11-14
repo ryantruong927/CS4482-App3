@@ -13,6 +13,8 @@ namespace Manager {
 		private static SaveManager saveManager;
 		private static InventoryManager inventoryManager;
 
+		public static float gravity = -5f;
+
 		private void Start() {
 			menuManager = GetComponent<MenuManager>();
 			sceneManager = GetComponent<SceneManager>();
