@@ -4,40 +4,49 @@ using UnityEngine;
 
 namespace Character {
 	public class PlayerController : CharacterController {
-		private bool isJumping;
 		private float input;
-		public float maxJumpHeight = 3f;
-		public float minJumpHeight = 0.5f;
-		private float maxJumpSpeed;
 
 		protected override void Start() {
 			base.Start();
-
-			maxJumpSpeed = Mathf.Sqrt(2 * -gravity * maxJumpHeight);
 		}
 
 		protected override void Update() {
 			base.Update();
+			Vector2 velocity = rb.velocity;
 
 			input = Input.GetAxisRaw("Horizontal");
 
-			if (Input.GetButtonDown("Jump"))
-				isJumping = true;
-			else if (Input.GetButtonUp("Jump"))
+			if (isGrounded) {
+				velocity.x = speed * input;
+
+				if (Input.GetButton("Sprint"))
+					velocity.x *= sprintMultiplier;
+
 				isJumping = false;
-		}
+				hasCancelledJump = false;
 
-		protected override void FixedUpdate() {
-			base.FixedUpdate();
+				if (Input.GetButtonDown("Jump")) {
+					velocity.y = maxJumpForce;
+					isJumping = true;
+				}
+			}
+			else {
+				if (velocity.x == 0)
+					velocity.x = speed * jumpSpeedMultiplier * input;
+				else if (velocity.x > 0 && input < 0)
+					velocity.x = -speed * jumpSpeedMultiplier;
+				else if (velocity.x < 0 && input > 0)
+					velocity.x = speed * jumpSpeedMultiplier;
+			}
 
-			velocity.x += speed * input * Time.deltaTime;
+			if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
+				isJumping = false;
+				hasCancelledJump = true;
 
-			if (isJumping)
-				velocity.y += maxJumpSpeed * Time.deltaTime;
-			//else
-			//	velocity.y += gravity * Time.deltaTime;
+				velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
+			}
 
-			rb.MovePosition(pos + velocity);
+			rb.velocity = velocity;
 		}
 	}
 }
