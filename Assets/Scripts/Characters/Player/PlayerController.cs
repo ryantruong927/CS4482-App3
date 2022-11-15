@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Character {
+namespace Character.Player {
 	public class PlayerController : CharacterController {
 		private float input;
 
@@ -16,11 +16,19 @@ namespace Character {
 
 			input = Input.GetAxisRaw("Horizontal");
 
+			if (input != 0)
+				sr.flipX = input == -1;
+
+			anim.SetBool("IsGrounded", isGrounded);
 			if (isGrounded) {
 				velocity.x = speed * input;
 
-				if (Input.GetButton("Sprint"))
+				if (Input.GetButton("Sprint")) {
 					velocity.x *= sprintMultiplier;
+					anim.SetBool("IsSprinting", true);
+				}
+				else
+					anim.SetBool("IsSprinting", false);
 
 				isJumping = false;
 				hasCancelledJump = false;
@@ -46,6 +54,8 @@ namespace Character {
 				velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
 			}
 
+			anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
+			anim.SetFloat("Speed Y", velocity.y);
 			rb.velocity = velocity;
 		}
 	}

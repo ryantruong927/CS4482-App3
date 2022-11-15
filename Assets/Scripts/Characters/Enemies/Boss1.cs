@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Character.Enemy {
-    public class EnemyController : CharacterController {
-    }
+	public class Boss1 : EnemyController {
+	}
 }
