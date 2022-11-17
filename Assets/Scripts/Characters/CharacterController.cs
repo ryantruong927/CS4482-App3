@@ -17,6 +17,9 @@ namespace Character {
 		protected bool isSprinting = false;
 		public float sprintMultiplier = 1.5f;
 
+		protected bool isCrouching = false;
+		public float crouchMultiplier = 0.5f;
+
 		protected bool isGrounded = true;
 		protected float gravity;
 		protected bool isJumping, hasCancelledJump;

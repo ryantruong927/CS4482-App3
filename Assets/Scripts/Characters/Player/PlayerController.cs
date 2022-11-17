@@ -11,6 +11,7 @@ namespace Character.Player {
 
 		private float input;
 		private float lookDirection = 1f;
+
 		private bool isDashing = false;
 		private bool hasDashed = false;
 		public float dashTime = 0.25f;
@@ -55,12 +56,20 @@ namespace Character.Player {
 				if (isGrounded) {
 					velocity.x = speed * input;
 
-					if (Input.GetButton("Sprint")) {
-						velocity.x *= sprintMultiplier;
-						anim.SetBool("IsSprinting", true);
+					if (Input.GetButton("Crouch")) {
+						velocity.x *= crouchMultiplier;
+						isCrouching = true;
 					}
-					else
-						anim.SetBool("IsSprinting", false);
+					else {
+						isCrouching = false;
+
+						if (Input.GetButton("Sprint")) {
+							velocity.x *= sprintMultiplier;
+							isSprinting = true;
+						}
+						else
+							isSprinting = false;
+					}
 
 					isJumping = false;
 					hasCancelledJump = false;
@@ -81,14 +90,8 @@ namespace Character.Player {
 						velocity.x = speed * jumpSpeedMultiplier;
 				}
 
-				if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
-					isJumping = false;
-					hasCancelledJump = true;
 
-					velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
-				}
-
-				if (powerUpInfo.hasDash && Input.GetButtonDown("Dash") && !hasDashed) {
+				if (Input.GetButtonDown("Dash") && powerUpInfo.hasDash && !hasDashed) {
 					rb.gravityScale = 0;
 					isDashing = true;
 					hasDashed = true;
@@ -96,10 +99,21 @@ namespace Character.Player {
 					velocity.x += speed * dashMultiplier * lookDirection;
 					velocity.y = 0;
 				}
+				else if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
+					isJumping = false;
+					hasCancelledJump = true;
+
+					velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
+				}
+
+				rb.velocity = velocity;
+
 
 				anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
 				anim.SetFloat("Speed Y", velocity.y);
-				rb.velocity = velocity;
+				anim.SetBool("IsSprinting", isSprinting);
+				anim.SetBool("IsCrouching", isCrouching);
+				anim.SetBool("IsDashing", isDashing);
 			}
 		}
 
