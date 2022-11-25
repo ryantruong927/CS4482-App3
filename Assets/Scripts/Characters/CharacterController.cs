@@ -13,6 +13,9 @@ namespace Character {
 		protected Rigidbody2D rb;
 		protected BoxCollider2D boxCollider2D;
 
+		public int maxHealth;
+		public int CurrentHealth { get; protected set; }
+
 		public float speed = 3f;
 		protected bool isSprinting = false;
 		public float sprintMultiplier = 1.5f;
@@ -35,7 +38,6 @@ namespace Character {
 			boxCollider2D = GetComponent<BoxCollider2D>();
 
 			gravity = Physics2D.gravity.y;
-			//gravity = Manager.GameManager.gravity;
 		}
 
 		protected virtual void Update() {
@@ -46,6 +48,14 @@ namespace Character {
 
 		private bool CheckIfGrounded() {
 			return Physics2D.OverlapBox(new Vector2(rb.position.x + boxCollider2D.offset.x, rb.position.y + boxCollider2D.offset.y - boxCollider2D.size.y * 0.5f), new Vector2(boxCollider2D.size.x, 0.125f), default, 1 << LayerMask.NameToLayer("Ground"));
+		}
+
+		public virtual bool Attack() {
+			return true;
+		}
+
+		public virtual void Heal(int amount) {
+
 		}
 
 		private void OnDrawGizmos() {
