@@ -27,93 +27,101 @@ namespace Character.Player {
 
 			Vector2 velocity;
 
-			if (isDashing) {
-				dashTimer -= Time.deltaTime;
-
-				if (dashTimer <= 0) {
-					rb.gravityScale = 1;
-					isDashing = false;
-					velocity = Vector2.zero;
-				}
-				else {
-					velocity.x = speed * dashMultiplier * lookDirection;
-					velocity.y = 0;
-				}
-
-				rb.velocity = velocity;
+			if (isAttacking) {
 			}
 			else {
-				input = Input.GetAxisRaw("Horizontal");
-
-				if (input != 0) {
-					lookDirection = input;
-					sr.flipX = lookDirection == -1;
+				if (Input.GetButtonDown("Attack")) {
+					isAttacking = true;
+					anim.SetBool("IsAttacking", true);
 				}
+				else if (isDashing) {
+					dashTimer -= Time.deltaTime;
 
-				velocity = rb.velocity;
-
-				anim.SetBool("IsGrounded", isGrounded);
-				if (isGrounded) {
-					velocity.x = speed * input;
-
-					if (Input.GetButton("Crouch")) {
-						velocity.x *= crouchMultiplier;
-						isCrouching = true;
+					if (dashTimer <= 0) {
+						rb.gravityScale = 1;
+						isDashing = false;
+						velocity = Vector2.zero;
 					}
 					else {
-						isCrouching = false;
-
-						if (Input.GetButton("Sprint")) {
-							velocity.x *= sprintMultiplier;
-							isSprinting = true;
-						}
-						else
-							isSprinting = false;
+						velocity.x = speed * dashMultiplier * lookDirection;
+						velocity.y = 0;
 					}
 
-					isJumping = false;
-					hasCancelledJump = false;
-
-					if (Input.GetButtonDown("Jump")) {
-						velocity.y = maxJumpForce;
-						isJumping = true;
-					}
-
-					hasDashed = false;
+					rb.velocity = velocity;
 				}
 				else {
-					if (velocity.x == 0)
-						velocity.x = speed * jumpSpeedMultiplier * input;
-					else if (velocity.x > 0 && input < 0)
-						velocity.x = -speed * jumpSpeedMultiplier;
-					else if (velocity.x < 0 && input > 0)
-						velocity.x = speed * jumpSpeedMultiplier;
+					input = Input.GetAxisRaw("Horizontal");
+
+					if (input != 0) {
+						lookDirection = input;
+						sr.flipX = lookDirection == -1;
+					}
+
+					velocity = rb.velocity;
+
+					anim.SetBool("IsGrounded", isGrounded);
+					if (isGrounded) {
+						velocity.x = speed * input;
+
+						if (Input.GetButton("Crouch")) {
+							velocity.x *= crouchMultiplier;
+							isCrouching = true;
+						}
+						else {
+							isCrouching = false;
+
+							if (Input.GetButton("Sprint")) {
+								velocity.x *= sprintMultiplier;
+								isSprinting = true;
+							}
+							else
+								isSprinting = false;
+						}
+
+						isJumping = false;
+						hasCancelledJump = false;
+
+						if (Input.GetButtonDown("Jump")) {
+							velocity.y = maxJumpForce;
+							isJumping = true;
+						}
+
+						hasDashed = false;
+					}
+					else {
+						if (velocity.x == 0)
+							velocity.x = speed * jumpSpeedMultiplier * input;
+						else if (velocity.x > 0 && input < 0)
+							velocity.x = -speed * jumpSpeedMultiplier;
+						else if (velocity.x < 0 && input > 0)
+							velocity.x = speed * jumpSpeedMultiplier;
+					}
+
+
+					if (Input.GetButtonDown("Dash") && powerUpInfo.hasDash && !hasDashed) {
+						rb.gravityScale = 0;
+						isDashing = true;
+						hasDashed = true;
+						dashTimer = dashTime;
+						velocity.x += speed * dashMultiplier * lookDirection;
+						velocity.y = 0;
+					}
+					else if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
+						isJumping = false;
+						hasCancelledJump = true;
+
+						velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
+					}
+
+					rb.velocity = velocity;
+
+
+					anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
+					anim.SetFloat("Speed Y", velocity.y);
+					anim.SetBool("IsSprinting", isSprinting);
+					anim.SetBool("IsCrouching", isCrouching);
+					anim.SetBool("IsDashing", isDashing);
 				}
-
-
-				if (Input.GetButtonDown("Dash") && powerUpInfo.hasDash && !hasDashed) {
-					rb.gravityScale = 0;
-					isDashing = true;
-					hasDashed = true;
-					dashTimer = dashTime;
-					velocity.x += speed * dashMultiplier * lookDirection;
-					velocity.y = 0;
-				}
-				else if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
-					isJumping = false;
-					hasCancelledJump = true;
-
-					velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
-				}
-
-				rb.velocity = velocity;
-
-
-				anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
-				anim.SetFloat("Speed Y", velocity.y);
-				anim.SetBool("IsSprinting", isSprinting);
-				anim.SetBool("IsCrouching", isCrouching);
-				anim.SetBool("IsDashing", isDashing);
 			}
 		}
 

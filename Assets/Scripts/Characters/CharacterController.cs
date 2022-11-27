@@ -31,6 +31,8 @@ namespace Character {
 		public float minJumpHeight = 0.5f;
 		protected float maxJumpForce, minJumpForce; // vf^2 = sqrt(2 * vi^2 * a * d)
 
+		protected bool isAttacking = false;
+
 		protected virtual void Start() {
 			sr = GetComponent<SpriteRenderer>();
 			anim = GetComponent<Animator>();
