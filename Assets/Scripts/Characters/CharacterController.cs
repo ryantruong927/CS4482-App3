@@ -32,6 +32,8 @@ namespace Character {
 		protected float maxJumpForce, minJumpForce; // vf^2 = sqrt(2 * vi^2 * a * d)
 
 		protected bool isAttacking = false;
+		public float attackTime = 0.2f;
+		protected float attackTimer;
 
 		protected virtual void Start() {
 			sr = GetComponent<SpriteRenderer>();
@@ -56,8 +58,17 @@ namespace Character {
 			return true;
 		}
 
-		public virtual void Heal(int amount) {
+		public virtual void EndAttack() {
+			isAttacking = false;
+			anim.SetBool("IsAttacking", false);
+		}
 
+		public virtual void Hit(int amount) {
+			CurrentHealth = Mathf.Clamp(CurrentHealth + amount, 0, maxHealth);
+		}
+
+		public virtual void Heal(int amount) {
+			CurrentHealth = Mathf.Clamp(CurrentHealth + amount, 0, maxHealth);
 		}
 
 		private void OnDrawGizmos() {

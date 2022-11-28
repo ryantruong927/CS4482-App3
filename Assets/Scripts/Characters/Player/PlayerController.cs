@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,13 +29,14 @@ namespace Character.Player {
 			Vector2 velocity;
 
 			if (isAttacking) {
+				if (rb.velocity.y == 0) {
+					velocity.x = 0;
+					velocity.y = rb.velocity.y;
+					rb.velocity = velocity;
+				}
 			}
 			else {
-				if (Input.GetButtonDown("Attack")) {
-					isAttacking = true;
-					anim.SetBool("IsAttacking", true);
-				}
-				else if (isDashing) {
+				if (isDashing) {
 					dashTimer -= Time.deltaTime;
 
 					if (dashTimer <= 0) {
@@ -48,6 +50,10 @@ namespace Character.Player {
 					}
 
 					rb.velocity = velocity;
+				}
+				else if (Input.GetButtonDown("Attack")) {
+					isAttacking = true;
+					anim.SetBool("IsAttacking", true);
 				}
 				else {
 					input = Input.GetAxisRaw("Horizontal");
@@ -125,8 +131,13 @@ namespace Character.Player {
 			}
 		}
 
+		public override void Hit(int amount) {
+			if (!isDashing)
+				base.Hit(amount);
+		}
+
 		public bool PowerUp(string powerUp) {
-			switch(powerUp) {
+			switch (powerUp) {
 				case "Dash":
 					powerUpInfo.hasDash = true;
 					return true;

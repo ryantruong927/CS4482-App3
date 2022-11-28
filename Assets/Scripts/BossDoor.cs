@@ -1,12 +1,12 @@
-using Character.Enemy;
+using Character.Enemy.Boss;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BossDoor : MonoBehaviour {
-    public EnemyController boss;
+    public BossController boss;
     private void OnTriggerEnter2D(Collider2D collision) {
-        boss.StartCombat();
+		boss.StartCombat();
         Destroy(gameObject);
     }
 }
