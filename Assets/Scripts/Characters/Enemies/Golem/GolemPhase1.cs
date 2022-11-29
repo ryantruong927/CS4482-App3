@@ -1,3 +1,4 @@
+using Character.Enemy.Boss;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,20 +6,19 @@ using UnityEngine;
 namespace Character.Enemy.Phase {
 	public class GolemPhase1 : AbstractPhase {
 		private enum State {
-			CHASING,
-			ATTACKING,
+			FIRING,
+			FIRED,
+			SHIELDING,
 			RETREATING,
-			REGENERATING
 		}
 		private State state;
 
-		private bool willRegenerate = false;
-		private const float regenerateTime = 1f;
-		private float regenerateTimer;
 		private Vector2 enemyPos, playerPos;
+		private float cooldownTimer;
+		public float shieldDistance = 1.5f;
 
 		private void Start() {
-			state = State.CHASING;
+			state = State.FIRING;
 		}
 
 		private void FixedUpdate() {
@@ -26,62 +26,39 @@ namespace Character.Enemy.Phase {
 			playerPos = playerTransform.position;
 
 			switch (state) {
-				case State.CHASING:
-					Chase();
-					CheckDistance();
+				case State.FIRING:
+					if (CheckDistance()) {
+						anim.SetTrigger("IsFiring");
+						cooldownTimer = ((GolemController)enemy).fireCooldown;
+						state = State.FIRED;
+					}
 
 					break;
-				case State.ATTACKING:
-					if (!anim.GetBool("IsAttacking")) {
-						if (Attack()) {
-							willRegenerate = true;
-							state = State.RETREATING;
-							Retreat();
-						}
-						else
-							Retreat();
-					}
+				case State.FIRED:
+					cooldownTimer -= Time.deltaTime;
+
+					if (cooldownTimer < 0)
+						state = State.FIRING;
+					break;
+				case State.SHIELDING:
 
 					break;
 				case State.RETREATING:
 					Retreat();
 
 					break;
-				case State.REGENERATING:
-					regenerateTimer -= Time.deltaTime;
-
-					if (regenerateTimer <= 0)
-						state = State.CHASING;
-
-					break;
 			}
 		}
 
-		private void CheckDistance() {
-			if (Vector2.Distance(enemyPos, playerPos) >= 1f)
-				state = State.CHASING;
-			else {
-				state = State.ATTACKING;
-				anim.SetBool("IsAttacking", true);
-			}
-		}
-
-		private void Chase() {
-			Vector2 pos = Vector2.MoveTowards(enemyPos, playerPos, speed * Time.deltaTime);
-			rb.MovePosition(pos);
+		private bool CheckDistance() {
+			return Vector2.Distance(enemyPos, playerPos) >= shieldDistance;
 		}
 
 		private void Retreat() {
 			float retreatDirection = enemyPos.x > playerPos.x ? 1f : -1f;
 
 			if (Vector2.Distance(enemyPos, playerPos) >= enemy.retreatDistance) {
-				if (willRegenerate) {
-					rb.velocity = Vector2.zero;
-					willRegenerate = false;
-					Regenerate();
-				}
-				else
-					state = State.CHASING;
+				state = State.FIRING;
 			}
 			else {
 				Vector2 velocity = rb.velocity;
@@ -90,15 +67,6 @@ namespace Character.Enemy.Phase {
 			}
 		}
 
-		private bool Attack() {
-			return enemy.Attack();
-		}
-
-		private void Regenerate() {
-			state = State.REGENERATING;
-			regenerateTimer = regenerateTime;
-			enemy.Heal(1);
-		}
 
 		public override void NextPhase() {
 		}

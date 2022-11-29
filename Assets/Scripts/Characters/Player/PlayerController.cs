@@ -11,7 +11,6 @@ namespace Character.Player {
 		private PowerUpInfo powerUpInfo;
 
 		private float input;
-		private float lookDirection = 1f;
 
 		private bool isDashing = false;
 		private bool hasDashed = false;
@@ -26,14 +25,9 @@ namespace Character.Player {
 		protected override void Update() {
 			base.Update();
 
-			Vector2 velocity;
+			Vector2 velocity = Vector2.zero;
 
 			if (isAttacking) {
-				if (rb.velocity.y == 0) {
-					velocity.x = 0;
-					velocity.y = rb.velocity.y;
-					rb.velocity = velocity;
-				}
 			}
 			else {
 				if (isDashing) {
@@ -120,7 +114,6 @@ namespace Character.Player {
 					}
 
 					rb.velocity = velocity;
-
 
 					anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
 					anim.SetFloat("Speed Y", velocity.y);

@@ -17,6 +17,8 @@ namespace Character.Enemy.Boss {
 		protected override void Update() {
 			if (!isAttacking)
 				sr.flipX = rb.position.x > player.position.x;
+
+			lookDirection = sr.flipX ? -1f : 1f;
 		}
 	}
 }

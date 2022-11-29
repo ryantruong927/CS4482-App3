@@ -16,6 +16,7 @@ namespace Character {
 		public int maxHealth;
 		public int CurrentHealth { get; protected set; }
 
+		protected float lookDirection = 1f;
 		public float speed = 3f;
 		protected bool isSprinting = false;
 		public float sprintMultiplier = 1.5f;
