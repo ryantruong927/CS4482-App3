@@ -11,8 +11,6 @@ namespace Character.Enemy {
 
         protected float speed;
 
-        public abstract void PrevPhase();
-        public abstract void NextPhase();
 		public void Init(EnemyController enemy, Transform playerTransform) {
             this.enemy = enemy;
             this.playerTransform = playerTransform;

@@ -17,8 +17,8 @@ TagManager:
   - Enemy
   - PowerUp
   - Projectile
-  - 
-  - 
+  - Hitbox
+  - FOV
   - 
   - 
   - 
