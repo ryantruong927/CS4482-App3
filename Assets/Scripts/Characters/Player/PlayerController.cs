@@ -16,6 +16,11 @@ namespace Character.Player {
 
 		private float input;
 
+		public float coyoteTime = 0.1f;
+		private float coyoteTimer;
+		private bool hasCoyoteTime = false;
+		private bool canJump = true;
+
 		public SpecialProjectile projectile;
 		public Vector2 projectilePos = new Vector2(-0.5f, -0.21875f);
 		private bool isUsingSpecial = false;
@@ -60,6 +65,11 @@ namespace Character.Player {
 					}
 				}
 
+				if (isUsingSpecial) {
+					velocity.x = 0;
+					velocity.y = rb.velocity.y;
+					rb.velocity = velocity;
+				}
 				if (!isAttacking && !isUsingSpecial) {
 					if (isDashing) {
 						dashTimer -= Time.deltaTime;
@@ -91,7 +101,19 @@ namespace Character.Player {
 						velocity = rb.velocity;
 
 						anim.SetBool("IsGrounded", isGrounded);
-						if (isGrounded) {
+
+						if (isGrounded || hasCoyoteTime) {
+							canJump = true;
+
+							if (hasCoyoteTime) {
+								coyoteTimer -= Time.deltaTime;
+
+								if (coyoteTimer < 0) {
+									hasCoyoteTime = false;
+									canJump = false;
+								}
+							}
+
 							velocity.x = speed * input;
 
 							if (Input.GetButton("Crouch")) {
@@ -113,6 +135,8 @@ namespace Character.Player {
 							hasCancelledJump = false;
 
 							if (Input.GetButtonDown("Jump")) {
+								hasCoyoteTime = false;
+								canJump = false;
 								velocity.y = maxJumpForce;
 								isJumping = true;
 							}
@@ -125,6 +149,11 @@ namespace Character.Player {
 							usedDJ = false;
 						}
 						else {
+							if (!hasCoyoteTime && canJump) {
+								coyoteTimer = coyoteTime;
+								hasCoyoteTime = true;
+							}
+
 							if (velocity.x == 0)
 								velocity.x = speed * jumpSpeedMultiplier * input;
 							else if (velocity.x > 0 && input < 0)
@@ -168,6 +197,19 @@ namespace Character.Player {
 			}
 		}
 
+		//private void FixedUpdate() {
+		//	if (isGrounded) {
+		//		RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, 1 << LayerMask.NameToLayer("Ground"));
+
+		//		if (hit.collider != null && Mathf.Abs(hit.normal.x) > 0.1f) {
+		//			rb.velocity = new Vector2(rb.velocity.x - hit.normal.x, rb.velocity.y);
+		//			Vector3 pos = rb.position;
+		//			pos.y += -hit.normal.x * Mathf.Abs(rb.velocity.x) * Time.deltaTime * (rb.velocity.x - hit.normal.x > 0 ? 1 : -1);
+		//			transform.position = pos;
+		//		}
+		//	}
+		//}
+
 		public void Fire() {
 			Vector2 pos = new Vector2(projectilePos.x * lookDirection, projectilePos.y);
 
@@ -191,6 +233,10 @@ namespace Character.Player {
 		public override void Hit(int amount) {
 			if (!isPaused && !isDashing) {
 				base.Hit(amount);
+				isAttacking = false;
+				isUsingSpecial = false;
+				anim.SetBool("IsAttacking", false);
+				anim.SetBool("IsUsingSpecial", false);
 
 				playerHUD.UpdateHealth(CurrentHealth);
 

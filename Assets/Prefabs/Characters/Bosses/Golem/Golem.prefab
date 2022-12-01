@@ -1,5 +1,76 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3238601621437514330
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6307888123396121704}
+  - component: {fileID: 9198009751340610526}
+  - component: {fileID: 4199499089699954728}
+  m_Layer: 11
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6307888123396121704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3238601621437514330}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7592278331682006814}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &9198009751340610526
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3238601621437514330}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.37123775}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 6.25, y: 6.25}
+    newSize: {x: 1.40625, y: 1.9375}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.9416039, y: 3.3719778}
+  m_EdgeRadius: 0
+--- !u!114 &4199499089699954728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3238601621437514330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cae18a637d3a13f4593741fad47145b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7592278331682006804
 GameObject:
   m_ObjectHideFlags: 0
@@ -32,7 +103,8 @@ Transform:
   m_LocalPosition: {x: -22.8125, y: 4.9375, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6307888123396121704}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -167,7 +239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8b6b152be78c243be6d9a059a74faa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  HitMaterial: {fileID: 2100000, guid: b9595e0000bbab041ae83d875a650b4f, type: 2}
+  maxHealth: 30
   speed: 3
   sprintMultiplier: 1.5
   crouchMultiplier: 0.5
@@ -175,11 +248,9 @@ MonoBehaviour:
   maxJumpHeight: 2
   minJumpHeight: 0.5
   attackTime: 0.2
-  hitTime: 0.2
-  invincibleTime: 1
   isPatrolling: 0
   retreatMultiplier: 2
   retreatDistance: 4
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 2280376946945671444, guid: f6ba39bb967988249aebefc0ba03c099, type: 3}
   projectileForce: 400
   fireCooldown: 2

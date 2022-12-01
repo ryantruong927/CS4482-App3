@@ -101,18 +101,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4fbc93a05ec8e540a4b64a5bc81aac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HitMaterial: {fileID: 2100000, guid: b9595e0000bbab041ae83d875a650b4f, type: 2}
   maxHealth: 20
-  currentHealth: 0
-  speed: 2
+  speed: 3
   sprintMultiplier: 1.5
   crouchMultiplier: 0.5
   jumpSpeedMultiplier: 0.9
   maxJumpHeight: 2
   minJumpHeight: 0.5
   attackTime: 0.2
-  isFacingLeft: 0
+  isPatrolling: 0
   retreatMultiplier: 9
-  retreatDistance: 4
+  retreatDistance: 6
+  summonPrefab: {fileID: 8319095795080729173, guid: 8b691ba213da196498ac237d496872a9, type: 3}
 --- !u!95 &6009293264920937957
 Animator:
   serializedVersion: 4

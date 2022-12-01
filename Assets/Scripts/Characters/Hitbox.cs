@@ -11,7 +11,6 @@ namespace Character {
         }
 
         private void OnTriggerEnter2D(Collider2D collision) {
-            Debug.Log(collision);
 			if (!collision.CompareTag(owner))
                 collision.GetComponent<CharacterController>().Hit(1);
         }

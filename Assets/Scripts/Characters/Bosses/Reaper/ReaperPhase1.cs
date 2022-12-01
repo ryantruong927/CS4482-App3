@@ -10,13 +10,14 @@ namespace Character.Enemy.Phase {
 			CHASING,
 			ATTACKING,
 			RETREATING,
-			REGENERATING
+			SUMMONING
 		}
 		private State state;
 
-		private bool willRegenerate = false;
-		private const float regenerateTime = 1f;
-		private float regenerateTimer;
+		float retreatDirection;
+		private bool willSummon = false;
+		private const float summonTime = 1f;
+		private float summonTimer;
 		private Vector2 enemyPos, playerPos;
 
 		private void Start() {
@@ -27,48 +28,55 @@ namespace Character.Enemy.Phase {
 			enemyPos = rb.position;
 			playerPos = playerTransform.position;
 
-			if (enemy.CurrentHealth < enemy.maxHealth / 2)
+			if (enemy.CurrentHealth <= enemy.maxHealth / 2) {
+				anim.SetBool("IsAttacking", false);
+				anim.SetBool("IsRetreating", false);
+				anim.SetBool("IsSummoning", false);
 				((ReaperController)enemy).NextPhase(typeof(ReaperPhase2));
+			}
 
 			switch (state) {
 				case State.CHASING:
 					Chase();
-					CheckDistance();
+
+					if (IsPlayerWithinDistance(2f)){ 
+						state = State.ATTACKING;
+						anim.SetBool("IsAttacking", true);
+					}
 
 					break;
 				case State.ATTACKING:
 					if (!anim.GetBool("IsAttacking")) {
-						if (true) {
-							willRegenerate = true;
+						if (IsPlayerWithinDistance(enemy.retreatDistance)) {
+							willSummon = true;
+							retreatDirection = enemyPos.x > playerPos.x ? 1f : -1f;
 							state = State.RETREATING;
-							Retreat();
 						}
 						else
-							Retreat();
+							state = State.CHASING;
 					}
 
 					break;
 				case State.RETREATING:
+					anim.SetBool("IsRetreating", true);
 					Retreat();
 
 					break;
-				case State.REGENERATING:
-					regenerateTimer -= Time.deltaTime;
+				case State.SUMMONING:
+					summonTimer -= Time.deltaTime;
 
-					if (regenerateTimer <= 0)
+					if (summonTimer < 0) {
+						((ReaperController)enemy).Summon();
 						state = State.CHASING;
+						anim.SetBool("IsSummoning", false);
+					}
 
 					break;
 			}
 		}
 
-		private void CheckDistance() {
-			if (Vector2.Distance(enemyPos, playerPos) >= 2f)
-				state = State.CHASING;
-			else {
-				state = State.ATTACKING;
-				anim.SetBool("IsAttacking", true);
-			}
+		private bool IsPlayerWithinDistance(float distance) {
+			return Vector2.Distance(enemyPos, playerPos) <= distance;
 		}
 
 		private void Chase() {
@@ -77,28 +85,25 @@ namespace Character.Enemy.Phase {
 		}
 
 		private void Retreat() {
-			float retreatDirection = enemyPos.x > playerPos.x ? 1f : -1f;
-
-			if (Vector2.Distance(enemyPos, playerPos) >= enemy.retreatDistance) {
-				if (willRegenerate) {
+			if (!IsPlayerWithinDistance(enemy.retreatDistance)) {
+				if (willSummon) {
+					anim.SetBool("IsRetreating", false);
 					rb.velocity = Vector2.zero;
-					willRegenerate = false;
-					Regenerate();
+					anim.SetBool("IsSummoning", true);
+					summonTimer = summonTime;
+					state = State.SUMMONING;
+					anim.SetBool("IsSummoning", true);
 				}
-				else
+				else {
+					anim.SetBool("IsRetreating", false);
 					state = State.CHASING;
+				}
 			}
 			else {
 				Vector2 velocity = rb.velocity;
 				velocity.x = speed * enemy.retreatMultiplier * retreatDirection;
 				rb.velocity = velocity;
 			}
-		}
-
-		private void Regenerate() {
-			state = State.REGENERATING;
-			regenerateTimer = regenerateTime;
-			enemy.Heal(1);
 		}
 	}
 }

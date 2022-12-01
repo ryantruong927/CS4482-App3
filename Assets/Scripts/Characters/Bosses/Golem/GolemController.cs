@@ -23,6 +23,7 @@ namespace Character.Enemy.Boss {
 			gameObject.AddComponent<GolemPhase1>();
 			currentPhase = GetComponent<GolemPhase1>();
 			currentPhase.Init(this, player);
+			isInvincible = false;
 
 			anim.enabled = true;
 		}

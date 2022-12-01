@@ -13,6 +13,8 @@ namespace Character {
 		protected Rigidbody2D rb;
 		protected BoxCollider2D boxCollider2D, hitboxCollider;
 		protected Transform hitboxTransform;
+		protected Material material;
+		public Material HitMaterial;
 
 		public int maxHealth;
 		public int CurrentHealth { get; protected set; }
@@ -50,28 +52,20 @@ namespace Character {
 				hitboxTransform = transform.GetChild(0).transform;
 				hitboxCollider = hitboxTransform.GetComponent<BoxCollider2D>();
 			}
+			material = sr.material;
 
 			CurrentHealth = maxHealth;
 			gravity = Physics2D.gravity.y;
-		}
-
-		protected virtual void Update() {
-			if (isHit) {
-				hitTimer -= Time.deltaTime;
-
-				if (hitTimer < 0) {
-					sr.color = Color.white;
-					isHit = false;
-				}
-			}
-
-			isGrounded = CheckIfGrounded();
 			maxJumpForce = Mathf.Sqrt(2 * -gravity * maxJumpHeight);
 			minJumpForce = Mathf.Sqrt(2 * -gravity * minJumpHeight);
 		}
 
+		protected virtual void Update() {
+			isGrounded = CheckIfGrounded();
+		}
+
 		private bool CheckIfGrounded() {
-			return Physics2D.OverlapBox(new Vector2(rb.position.x + boxCollider2D.offset.x, rb.position.y + boxCollider2D.offset.y - boxCollider2D.size.y * 0.5f), new Vector2(boxCollider2D.size.x, 0.125f), default, 1 << LayerMask.NameToLayer("Ground"));
+			return Physics2D.OverlapBox(new Vector2(rb.position.x + boxCollider2D.offset.x, rb.position.y + boxCollider2D.offset.y - boxCollider2D.size.y * 0.5f), new Vector2(boxCollider2D.size.x * 0.98f, 0.125f), default, 1 << LayerMask.NameToLayer("Ground"));
 		}
 
 		public virtual void EndAttack() {
@@ -83,11 +77,14 @@ namespace Character {
 			CurrentHealth -= amount;
 
 			if (CurrentHealth <= 0) {
+				rb.velocity = new Vector2(0, rb.velocity.y);
+				sr.material = material;
 				anim.SetBool("IsDead", true);
+				Destroy(hitboxTransform.gameObject);
 				Destroy(this);
 			}
 			else {
-				sr.color = new Color(1f, 0.9411765f, 0.5372549f);
+				sr.material = HitMaterial;
 				hitTimer = hitTime;
 				isHit = true;
 				anim.SetTrigger("Hit");
@@ -104,7 +101,7 @@ namespace Character {
 			if (boxCollider2D == null)
 				boxCollider2D = GetComponent<BoxCollider2D>();
 
-			Gizmos.DrawWireCube(new Vector2(rb.position.x + boxCollider2D.offset.x, rb.position.y + boxCollider2D.offset.y - boxCollider2D.size.y * 0.5f), new Vector2(boxCollider2D.size.x, 0.125f));
+			Gizmos.DrawWireCube(new Vector2(rb.position.x + boxCollider2D.offset.x, rb.position.y + boxCollider2D.offset.y - boxCollider2D.size.y * 0.5f), new Vector2(boxCollider2D.size.x * 0.99f, 0.125f));
 		}
 	}
 }
