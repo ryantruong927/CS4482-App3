@@ -17,6 +17,7 @@ namespace Character.Player {
 
 		public GameManager gameManager;
 		private PlayerHUD playerHUD;
+		public int CampfireNum { get; private set; }
 
 		private float input;
 		private bool isStanding = true;
@@ -45,15 +46,23 @@ namespace Character.Player {
 		public float pauseTime = 0.3f;
 		public bool isPaused = false;
 
+		private void Awake() {
+			playerHUD = GetComponent<PlayerHUD>();
+		}
+
 		protected override void Start() {
 			base.Start();
 
-			playerHUD = GetComponent<PlayerHUD>();
 			projectile = transform.GetChild(1).GetComponent<SpecialProjectile>();
 			projectile.owner = tag;
 		}
 
 		protected override void Update() {
+			if (Input.GetKeyDown(KeyCode.Escape)) {
+				isPaused = !isPaused;
+				gameManager.PauseGame(isPaused);
+			}
+
 			if (!isPaused) {
 				base.Update();
 
@@ -193,7 +202,7 @@ namespace Character.Player {
 						rb.velocity = velocity;
 
 						if (isResting)
-							anim.SetFloat("Speed X", input);
+							anim.SetFloat("Speed X", Mathf.Abs(input));
 						else
 							anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
 						anim.SetFloat("Speed Y", velocity.y);
@@ -278,6 +287,7 @@ namespace Character.Player {
 					if (powerUpInfo.hasBlueGem)
 						ending = ((Statue)interactable).AddGem("Blue Gem");
 					Debug.Log(ending);
+					gameManager.EndGame(ending);
 					break;
 				case "Save":
 					if (isGrounded) {
@@ -285,6 +295,10 @@ namespace Character.Player {
 						lookDirection = rb.position.x < collision.transform.position.x ? 1f : -1f;
 						sr.flipX = lookDirection == -1f;
 						Rest();
+
+						int campfireNum = Convert.ToInt32(interactable.name.Split(" ")[1].Trim());
+						Debug.Log(campfireNum);
+						gameManager.Save(campfireNum, powerUpInfo);
 					}
 
 					break;
@@ -298,7 +312,6 @@ namespace Character.Player {
 			isResting = true;
 
 			Heal(maxHealth);
-			gameManager.Save(powerUpInfo);
 		}
 
 		public void Stand() {
@@ -307,24 +320,26 @@ namespace Character.Player {
 		}
 
 		public bool PowerUp(string powerUp) {
+			if (playerHUD == null)
+				playerHUD = GetComponent<PlayerHUD>();
 			playerHUD.ShowItem(powerUp);
 
 			switch (powerUp) {
-				case "Black Gem":
-					powerUpInfo.hasBlackGem = true;
-					return true;
-				case "Blue Gem":
-					powerUpInfo.hasBlueGem = true;
-					return true;
-				case "Special":
-					powerUpInfo.hasSpecial = true;
-					playerHUD.UpdateCharge(1);
-					return true;
 				case "Dash":
 					powerUpInfo.hasDash = true;
 					return true;
 				case "Double Jump":
 					powerUpInfo.hasDJ = true;
+					return true;
+				case "Special":
+					powerUpInfo.hasSpecial = true;
+					playerHUD.UpdateCharge(1);
+					return true;
+				case "Black Gem":
+					powerUpInfo.hasBlackGem = true;
+					return true;
+				case "Blue Gem":
+					powerUpInfo.hasBlueGem = true;
 					return true;
 				default:
 					return false;

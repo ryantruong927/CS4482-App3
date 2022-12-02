@@ -75,13 +75,6 @@ namespace Character.Enemy {
 			anim.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
 		}
 
-		public override void Hit(int amount) {
-			if (!isChasing)
-				amount *= 100;
-
-			base.Hit(amount);
-		}
-
 		public virtual void StartCombat() {
 			inCombat = true;
 			anim.SetBool("InCombat", true);

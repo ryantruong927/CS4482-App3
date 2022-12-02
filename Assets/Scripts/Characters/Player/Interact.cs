@@ -12,7 +12,7 @@ namespace Character.Player {
         }
 
         private void Update() {
-            isInteracting = Input.GetButtonDown("Interact");
+            isInteracting = Input.GetButton("Interact");
         }
 
         private void OnTriggerStay2D(Collider2D collision) {

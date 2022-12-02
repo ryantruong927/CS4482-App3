@@ -132,6 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cae18a637d3a13f4593741fad47145b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
 --- !u!1 &9113798850966791383
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,6 +148,7 @@ GameObject:
   - component: {fileID: 9113798850966791369}
   - component: {fileID: 9113798850966791382}
   - component: {fileID: 9113798850966791373}
+  - component: {fileID: 636746087020442213}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -245,6 +247,7 @@ MonoBehaviour:
   maxJumpHeight: 2.5
   minJumpHeight: 0.5
   attackTime: 0.2
+  gameManager: {fileID: 0}
   coyoteTime: 0.1
   projectile: {fileID: 0}
   projectilePos: {x: -0.5, y: -0.21875}
@@ -339,6 +342,14 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!81 &636746087020442213
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9113798850966791383}
+  m_Enabled: 1
 --- !u!1001 &6629589456848910752
 PrefabInstance:
   m_ObjectHideFlags: 0
