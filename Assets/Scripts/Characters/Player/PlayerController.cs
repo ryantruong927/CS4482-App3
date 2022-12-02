@@ -1,20 +1,26 @@
+using Manager;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Character.Player {
-	public class PlayerController : CharacterController {
-		private struct PowerUpInfo {
-			public bool hasSpecial;
-			public bool hasDash;
-			public bool hasDJ;
-		}
-		private PowerUpInfo powerUpInfo;
+	public struct PowerUpInfo {
+		public bool hasSpecial;
+		public bool hasDash;
+		public bool hasDJ;
+		public bool hasBlackGem, hasBlueGem;
+	}
 
+	public class PlayerController : CharacterController {
+		public PowerUpInfo powerUpInfo;
+
+		public GameManager gameManager;
 		private PlayerHUD playerHUD;
 
 		private float input;
+		private bool isStanding = true;
+		private bool isResting = false;
 
 		public float coyoteTime = 0.1f;
 		private float coyoteTimer;
@@ -114,7 +120,8 @@ namespace Character.Player {
 								}
 							}
 
-							velocity.x = speed * input;
+							if (isStanding)
+								velocity.x = speed * input;
 
 							if (Input.GetButton("Crouch")) {
 								velocity.x *= crouchMultiplier;
@@ -185,7 +192,10 @@ namespace Character.Player {
 
 						rb.velocity = velocity;
 
-						anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
+						if (isResting)
+							anim.SetFloat("Speed X", input);
+						else
+							anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
 						anim.SetFloat("Speed Y", velocity.y);
 						anim.SetBool("IsSprinting", isSprinting);
 						anim.SetBool("IsCrouching", isCrouching);
@@ -254,8 +264,58 @@ namespace Character.Player {
 			isPaused = false;
 		}
 
+		public void Interact(Collider2D collision) {
+			Interactable interactable = collision.GetComponent<Interactable>();
+
+			string msg = interactable.Interact();
+			Debug.Log(msg);
+
+			switch (msg) {
+				case "Statue":
+					string ending = "";
+					if (powerUpInfo.hasBlackGem)
+						ending = ((Statue)interactable).AddGem("Black Gem");
+					if (powerUpInfo.hasBlueGem)
+						ending = ((Statue)interactable).AddGem("Blue Gem");
+					Debug.Log(ending);
+					break;
+				case "Save":
+					if (isGrounded) {
+						anim.SetTrigger("Rest");
+						lookDirection = rb.position.x < collision.transform.position.x ? 1f : -1f;
+						sr.flipX = lookDirection == -1f;
+						Rest();
+					}
+
+					break;
+			}
+		}
+
+		public void Rest() {
+			rb.velocity = new Vector2(0, rb.velocity.y);
+
+			isStanding = false;
+			isResting = true;
+
+			Heal(maxHealth);
+			gameManager.Save(powerUpInfo);
+		}
+
+		public void Stand() {
+			isStanding = true;
+			isResting = false;
+		}
+
 		public bool PowerUp(string powerUp) {
+			playerHUD.ShowItem(powerUp);
+
 			switch (powerUp) {
+				case "Black Gem":
+					powerUpInfo.hasBlackGem = true;
+					return true;
+				case "Blue Gem":
+					powerUpInfo.hasBlueGem = true;
+					return true;
 				case "Special":
 					powerUpInfo.hasSpecial = true;
 					playerHUD.UpdateCharge(1);

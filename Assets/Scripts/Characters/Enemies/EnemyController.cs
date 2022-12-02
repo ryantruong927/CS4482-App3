@@ -44,7 +44,7 @@ namespace Character.Enemy {
 			else {
 				if (isChasing) {
 					float distance = Vector2.Distance(rb.position, lastSeenPosition);
-					if (distance <= hitboxCollider.size.x) {
+					if (distance <= hitboxCollider.size.x + 0.5f) {
 						if (hasSeenPlayer) {
 							lookDirection = lastSeenPosition.x <= rb.position.x ? -1 : 1;
 							isAttacking = true;
@@ -73,6 +73,13 @@ namespace Character.Enemy {
 
 			sr.flipX = lookDirection == -1f;
 			anim.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
+		}
+
+		public override void Hit(int amount) {
+			if (!isChasing)
+				amount *= 100;
+
+			base.Hit(amount);
 		}
 
 		public virtual void StartCombat() {

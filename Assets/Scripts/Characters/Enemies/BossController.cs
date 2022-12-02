@@ -9,6 +9,7 @@ namespace Character.Enemy.Boss {
 		protected Transform player;
 		protected AbstractPhase currentPhase;
 		protected Type nextPhase;
+		public GameObject gemPrefab;
 
 		protected bool isInvincible = true;
 
@@ -37,10 +38,16 @@ namespace Character.Enemy.Boss {
 
 		public override void Hit(int amount) {
 			if (!isInvincible) {
-				if (CurrentHealth - amount <= 0)
+				if (CurrentHealth - amount <= 0) {
 					Destroy(currentPhase);
+					DropGem();
+				}
 				base.Hit(amount);
 			}
+		}
+
+		private void DropGem() {
+			GameObject gem = Instantiate(gemPrefab, rb.position, Quaternion.identity);
 		}
 
 		public void NextPhase(Type nextPhase) {

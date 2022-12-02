@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Interactable
+  - Interact
   layers:
   - Default
   - TransparentFX
@@ -19,8 +21,8 @@ TagManager:
   - Projectile
   - Hitbox
   - FOV
-  - 
-  - 
+  - Interactable
+  - Enemy Wall
   - 
   - 
   - 

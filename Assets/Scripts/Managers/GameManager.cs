@@ -1,3 +1,4 @@
+using Character.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,32 +7,42 @@ namespace Manager {
 	[RequireComponent(typeof(MenuManager))]
 	[RequireComponent(typeof(SceneManager))]
 	[RequireComponent(typeof(SaveManager))]
-	[RequireComponent(typeof(InventoryManager))]
 	public class GameManager : MonoBehaviour {
-		private static MenuManager menuManager;
-		private static SceneManager sceneManager;
-		private static SaveManager saveManager;
-		private static InventoryManager inventoryManager;
+		private MenuManager menuManager;
+		private SceneManager sceneManager;
+		private SaveManager saveManager;
 
-		public static float gravity = -5f;
+		public PlayerController player;
+		public GameObject reaper, golem;
 
-		private void Start() {
+		private void Awake() {
 			menuManager = GetComponent<MenuManager>();
 			sceneManager = GetComponent<SceneManager>();
 			saveManager = GetComponent<SaveManager>();
-			inventoryManager = GetComponent<InventoryManager>();
+
+			menuManager.SetGameManager(this);
+			sceneManager.SetGameManager(this);
+			saveManager.SetGameManager(this);
 		}
 
-		public static void StartGame() {
+		public void ChangeScene(int buildIndex) {
+			sceneManager.ChangeScene(buildIndex);
+		}
+
+		public void Save(PowerUpInfo powerUpInfo) {
+			saveManager.Save(powerUpInfo);
+		}
+
+		public void StartGame() {
 			saveManager.Load(0);
 		}
 
-		public static void ExitGame() {
-			saveManager.Save();
+		public void ExitGame() {
+			saveManager.Save(player.powerUpInfo);
 			sceneManager.ChangeScene(0);
 		}
 
-		public static void QuitGame() {
+		public void QuitGame() {
 			Application.Quit();
 			Debug.Log("Exiting game...");
 		}

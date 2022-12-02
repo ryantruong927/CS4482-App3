@@ -4,13 +4,18 @@ using UnityEngine;
 
 namespace Manager {
     public class MenuManager : MonoBehaviour {
+        private GameManager gameManager;
 
 		private void Start() {
 
 		}
 
+        public void SetGameManager(GameManager gameManager) {
+            this.gameManager = gameManager;
+        }
+
 		public void StartButton() {
-            GameManager.StartGame();
+			gameManager.StartGame();
         }
 
         public void SaveButton() {
@@ -18,11 +23,11 @@ namespace Manager {
         }
 
         public void ExitButton() {
-            GameManager.ExitGame();
+			gameManager.ExitGame();
         }
 
         public void QuitButton() {
-            GameManager.QuitGame();
+			gameManager.QuitGame();
         }
     }
 }

@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitMaterial: {fileID: 2100000, guid: b9595e0000bbab041ae83d875a650b4f, type: 2}
-  maxHealth: 20
+  maxHealth: 30
   speed: 3
   sprintMultiplier: 1.5
   crouchMultiplier: 0.5
@@ -113,6 +113,11 @@ MonoBehaviour:
   isPatrolling: 0
   retreatMultiplier: 9
   retreatDistance: 6
+  chaseSpeed: 2.5
+  chaseDistance: 10
+  chaseTime: 2
+  changeTime: 2
+  gemPrefab: {fileID: 5767557310378121725, guid: e3f0fd1b027202948a5c98e5bdd44446, type: 3}
   summonPrefab: {fileID: 8319095795080729173, guid: 8b691ba213da196498ac237d496872a9, type: 3}
 --- !u!95 &6009293264920937957
 Animator:
@@ -252,3 +257,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cae18a637d3a13f4593741fad47145b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1

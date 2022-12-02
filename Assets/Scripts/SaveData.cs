@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 [Serializable]
-public class SaveData : ScriptableObject {
-	public Character.Player.PlayerData playerData;
-	public int roomNum;
-	public bool isRoomCleared;
-	public bool isBoss1Defeated, isBoss2Defeated;
+public class SaveData {
+	public int campfireNum;
+	public bool hasSpecial;
+	public bool hasDash;
+	public bool hasDJ;
+	public bool hasBlackGem, hasBlueGem;
 }

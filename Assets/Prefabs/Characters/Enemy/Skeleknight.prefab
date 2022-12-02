@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitMaterial: {fileID: 2100000, guid: b9595e0000bbab041ae83d875a650b4f, type: 2}
-  maxHealth: 10
+  maxHealth: 20
   speed: 3
   sprintMultiplier: 1.5
   crouchMultiplier: 0.5
@@ -256,6 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cae18a637d3a13f4593741fad47145b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
 --- !u!1 &538394827478386166
 GameObject:
   m_ObjectHideFlags: 0

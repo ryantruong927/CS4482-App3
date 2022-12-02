@@ -71,6 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cae18a637d3a13f4593741fad47145b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
 --- !u!1 &7592278331682006804
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitMaterial: {fileID: 2100000, guid: b9595e0000bbab041ae83d875a650b4f, type: 2}
-  maxHealth: 30
+  maxHealth: 40
   speed: 3
   sprintMultiplier: 1.5
   crouchMultiplier: 0.5
@@ -251,6 +252,14 @@ MonoBehaviour:
   isPatrolling: 0
   retreatMultiplier: 2
   retreatDistance: 4
+  chaseSpeed: 2.5
+  chaseDistance: 10
+  chaseTime: 2
+  changeTime: 2
+  gemPrefab: {fileID: 4213808676919850932, guid: a4abec80eb72388419f220ed2785f285, type: 3}
   projectilePrefab: {fileID: 2280376946945671444, guid: f6ba39bb967988249aebefc0ba03c099, type: 3}
+  xLeft: -7.625
+  xMiddle: 0.375
+  xRight: 8.375
   projectileForce: 400
   fireCooldown: 2

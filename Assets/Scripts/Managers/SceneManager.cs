@@ -5,6 +5,12 @@ using SceneManagement = UnityEngine.SceneManagement;
 
 namespace Manager {
 	public class SceneManager : MonoBehaviour {
+		private GameManager gameManager;
+
+		public void SetGameManager(GameManager gameManager) {
+			this.gameManager = gameManager;
+		}
+
 		public void ChangeScene(int buildIndex) {
 			SceneManagement.SceneManager.LoadScene(buildIndex);
 		}
