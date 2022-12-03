@@ -1,7 +1,7 @@
 # CS4482-App3
 
 Short Metroidvania with two paths and bosses.
-Power-ups include dashing, double jumping, and a ranged attack.
+Power-ups include wall jumping, dashing, double jumping, and a ranged attack.
 
 All art assets used are below.
 
