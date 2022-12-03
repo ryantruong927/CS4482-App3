@@ -30,6 +30,7 @@ namespace Manager {
 
 				PlayerPrefs.SetInt("CampfireNum", saveData.campfireNum);
 				PlayerPrefs.Save();
+				powerUpInfo.hasWJ = saveData.hasWJ;
 				powerUpInfo.hasDash = saveData.hasDash;
 				powerUpInfo.hasDJ = saveData.hasDJ;
 				powerUpInfo.hasSpecial = saveData.hasSpecial;
@@ -51,6 +52,7 @@ namespace Manager {
 
 			SaveData saveData = new SaveData();
 			saveData.campfireNum = campfireNum;
+			saveData.hasWJ = powerUpInfo.hasWJ;
 			saveData.hasDash = powerUpInfo.hasDash;
 			saveData.hasDJ = powerUpInfo.hasDJ;
 			saveData.hasSpecial = powerUpInfo.hasSpecial;

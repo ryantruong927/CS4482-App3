@@ -61,10 +61,10 @@ namespace Character {
 		}
 
 		protected virtual void Update() {
-			isGrounded = CheckIfGrounded();
+			isGrounded = IsGrounded();
 		}
 
-		private bool CheckIfGrounded() {
+		protected bool IsGrounded() {
 			return Physics2D.OverlapBox(new Vector2(rb.position.x + boxCollider2D.offset.x, rb.position.y + boxCollider2D.offset.y - boxCollider2D.size.y * 0.5f), new Vector2(boxCollider2D.size.x * 0.98f, 0.125f), default, 1 << LayerMask.NameToLayer("Ground"));
 		}
 

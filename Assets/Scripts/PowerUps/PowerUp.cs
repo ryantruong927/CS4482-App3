@@ -9,7 +9,7 @@ namespace Character.PowerUp {
 		public string powerUp;
 
 		protected virtual void OnTriggerStay2D(Collider2D collision) {
-			if (collision.CompareTag("Player") && collision.GetComponent<PlayerController>().PowerUp(powerUp))
+			if (collision.CompareTag("Player") && collision.GetComponent<PlayerController>().PowerUp(true, powerUp))
 				Destroy(gameObject);
 		}
 	}

@@ -6,9 +6,10 @@ using UnityEngine;
 
 namespace Character.Player {
 	public struct PowerUpInfo {
-		public bool hasSpecial;
+		public bool hasWJ;
 		public bool hasDash;
 		public bool hasDJ;
+		public bool hasSpecial;
 		public bool hasBlackGem, hasBlueGem;
 	}
 
@@ -43,6 +44,9 @@ namespace Character.Player {
 
 		private bool usedDJ;
 
+		private bool isOnWall = false;
+		private bool usedWJ = false;
+
 		public float pauseTime = 0.3f;
 		public bool isPaused = false;
 
@@ -65,6 +69,7 @@ namespace Character.Player {
 
 			if (!isPaused) {
 				base.Update();
+				isOnWall = IsOnWall();
 
 				Vector2 velocity = Vector2.zero;
 
@@ -163,6 +168,7 @@ namespace Character.Player {
 
 							usedDash = false;
 							usedDJ = false;
+							usedWJ = false;
 						}
 						else {
 							if (!hasCoyoteTime && canJump) {
@@ -177,57 +183,57 @@ namespace Character.Player {
 							else if (velocity.x < 0 && input > 0)
 								velocity.x = speed * jumpSpeedMultiplier;
 
-							if (Input.GetButtonDown("Jump") && powerUpInfo.hasDJ && !usedDJ) {
-								velocity.y = maxJumpForce;
-								usedDJ = true;
+							if (Input.GetButtonDown("Jump")) {
+								if (powerUpInfo.hasDJ && !usedDJ) {
+									velocity.y = maxJumpForce;
+									usedDJ = true;
+								}
+								else if (isOnWall && powerUpInfo.hasWJ && !usedWJ) {
+									lookDirection = -lookDirection;
+									sr.flipX = lookDirection == -1;
+									velocity.x = speed * lookDirection;
+									velocity.y = maxJumpForce;
+									usedWJ = true;
+								}
 							}
 						}
-
-
-						if (Input.GetButtonDown("Dash") && powerUpInfo.hasDash && !usedDash) {
-							rb.gravityScale = 0;
-							isDashing = true;
-							usedDash = true;
-							dashTimer = dashTime;
-							velocity.x += speed * dashMultiplier * lookDirection;
-							velocity.y = 0;
-						}
-						else if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
-							isJumping = false;
-							hasCancelledJump = true;
-
-							velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
-						}
-
-						rb.velocity = velocity;
-
-						if (isResting)
-							anim.SetFloat("Speed X", Mathf.Abs(input));
-						else
-							anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
-						anim.SetFloat("Speed Y", velocity.y);
-						anim.SetBool("IsSprinting", isSprinting);
-						anim.SetBool("IsCrouching", isCrouching);
-						anim.SetBool("IsDashing", isDashing);
 					}
-				}
 
-				hitboxTransform.localPosition = new Vector2(hitboxCollider.size.x * lookDirection, 0);
+
+					if (Input.GetButtonDown("Dash") && powerUpInfo.hasDash && !usedDash) {
+						rb.gravityScale = 0;
+						isDashing = true;
+						usedDash = true;
+						dashTimer = dashTime;
+						velocity.x += speed * dashMultiplier * lookDirection;
+						velocity.y = 0;
+					}
+					else if (Input.GetButtonUp("Jump") && !hasCancelledJump && velocity.y > 0) {
+						isJumping = false;
+						hasCancelledJump = true;
+
+						velocity.y = velocity.y >= maxJumpForce ? minJumpForce : 0;
+					}
+
+					rb.velocity = velocity;
+
+					if (isResting)
+						anim.SetFloat("Speed X", Mathf.Abs(input));
+					else
+						anim.SetFloat("Speed X", Mathf.Abs(velocity.x));
+					anim.SetFloat("Speed Y", velocity.y);
+					anim.SetBool("IsSprinting", isSprinting);
+					anim.SetBool("IsCrouching", isCrouching);
+					anim.SetBool("IsDashing", isDashing);
+				}
 			}
+
+			hitboxTransform.localPosition = new Vector2(hitboxCollider.size.x * lookDirection, 0);
 		}
 
-		//private void FixedUpdate() {
-		//	if (isGrounded) {
-		//		RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, 1 << LayerMask.NameToLayer("Ground"));
-
-		//		if (hit.collider != null && Mathf.Abs(hit.normal.x) > 0.1f) {
-		//			rb.velocity = new Vector2(rb.velocity.x - hit.normal.x, rb.velocity.y);
-		//			Vector3 pos = rb.position;
-		//			pos.y += -hit.normal.x * Mathf.Abs(rb.velocity.x) * Time.deltaTime * (rb.velocity.x - hit.normal.x > 0 ? 1 : -1);
-		//			transform.position = pos;
-		//		}
-		//	}
-		//}
+		protected bool IsOnWall() {
+			return Physics2D.OverlapBox(new Vector2(rb.position.x + boxCollider2D.size.x * lookDirection * 0.5f, rb.position.y + boxCollider2D.offset.y), new Vector2(0.25f, boxCollider2D.size.y * 0.75f), default, 1 << LayerMask.NameToLayer("Ground"));
+		}
 
 		public void Fire() {
 			Vector2 pos = new Vector2(projectilePos.x * lookDirection, projectilePos.y);
@@ -319,10 +325,11 @@ namespace Character.Player {
 			isResting = false;
 		}
 
-		public bool PowerUp(string powerUp) {
+		public bool PowerUp(bool isPlayerCalling, string powerUp) {
+			Debug.Log(powerUp);
 			if (playerHUD == null)
 				playerHUD = GetComponent<PlayerHUD>();
-			playerHUD.ShowItem(powerUp);
+			playerHUD.ShowItem(isPlayerCalling, powerUp);
 
 			switch (powerUp) {
 				case "Dash":
@@ -330,6 +337,9 @@ namespace Character.Player {
 					return true;
 				case "Double Jump":
 					powerUpInfo.hasDJ = true;
+					return true;
+				case "Wall Jump":
+					powerUpInfo.hasWJ = true;
 					return true;
 				case "Special":
 					powerUpInfo.hasSpecial = true;
@@ -344,6 +354,15 @@ namespace Character.Player {
 				default:
 					return false;
 			}
+		}
+
+		private void OnDrawGizmos() {
+			if (rb == null)
+				rb = GetComponent<Rigidbody2D>();
+			if (boxCollider2D == null)
+				boxCollider2D = GetComponent<BoxCollider2D>();
+
+			Gizmos.DrawWireCube(new Vector2(rb.position.x + boxCollider2D.size.x * lookDirection * 0.5f, rb.position.y + boxCollider2D.offset.y), new Vector2(0.25f, boxCollider2D.size.y * 0.5f));
 		}
 	}
 }

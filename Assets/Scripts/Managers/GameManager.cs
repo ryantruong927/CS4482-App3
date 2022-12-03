@@ -11,7 +11,7 @@ namespace Manager {
 		private SaveManager saveManager;
 
 		public PlayerController player;
-		public GameObject dash, dj, special;
+		public GameObject wj, dash, dj, special;
 		public GameObject reaper, golem;
 
 		public GameObject pauseMenu, endingScreen;
@@ -29,24 +29,28 @@ namespace Manager {
 			if (buildIndex == 1) {
 				PowerUpInfo powerUpInfo = saveManager.Load(PlayerPrefs.GetInt("saveNum"));
 
+				if (powerUpInfo.hasWJ) {
+					player.PowerUp(false, "Wall Jump");
+					Destroy(wj);
+				}
 				if (powerUpInfo.hasDash) {
-					player.PowerUp("Dash");
+					player.PowerUp(false, "Dash");
 					Destroy(dash);
 				}
 				if (powerUpInfo.hasDJ) {
-					player.PowerUp("Double Jump");
+					player.PowerUp(false, "Double Jump");
 					Destroy(dj);
 				}
 				if (powerUpInfo.hasSpecial) {
-					player.PowerUp("Special");
+					player.PowerUp(false, "Special");
 					Destroy(special);
 				}
 				if (powerUpInfo.hasBlackGem) {
-					player.PowerUp("Black Gem");
+					player.PowerUp(false, "Black Gem");
 					Destroy(reaper);
 				}
 				if (powerUpInfo.hasBlueGem) {
-					player.PowerUp("Blue Gem");
+					player.PowerUp(false, "Blue Gem");
 					Destroy(golem);
 				}
 
